@@ -1,0 +1,23 @@
+# Gradle
+.gradle/
+build/
+*.apk
+*.aab
+
+# Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+*.keystore
+
+# Kotlin
+.kotlin/
+
+# Build outputs
+dist/
+
+# Misc
+.DS_Store
+*.log
+local.properties

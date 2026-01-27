@@ -1,0 +1,10 @@
+[settings]
+disable_tools = ["ruby", "bun", "go", "node", "python"]
+
+[tools]
+java = "temurin-21"
+gradle = "9.3"
+
+[env]
+ANDROID_HOME = "{{env.HOME}}/Android/Sdk"
+ANDROID_SDK_ROOT = "{{env.HOME}}/Android/Sdk"

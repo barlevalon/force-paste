@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Force Paste</string>
+    <string name="paste_button">PASTE CLIPBOARD</string>
+    <string name="empty_clipboard">Clipboard is empty</string>
+    <string name="pasting">Pasting...</string>
+    <string name="done">Done!</string>
+    <string name="settings_title">Force Paste Keyboard</string>
+    <string name="settings_instructions">To use Force Paste:\n\n1. Enable this keyboard in system settings\n2. Switch to it when you need to paste\n3. Tap the PASTE button\n4. Switch back to your normal keyboard</string>
+    <string name="enable_keyboard">Enable Keyboard</string>
+</resources>
