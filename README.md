@@ -26,7 +26,7 @@ export ANDROID_HOME=/path/to/Android/Sdk
 
 On first use, the script downloads Google’s Linux command-line tools into a private temporary directory, checks the pinned SHA-1 published in Google’s repository metadata, and cleans up the temporary files on exit. SHA-1 is the digest provided by that metadata, not a modern collision-resistant signature. Missing platform tools, Android SDK platform 34, and build tools 36.0.0 are installed after you review and accept Google’s SDK licenses. Existing complete SDK installations skip that step.
 
-The build creates `app/build/outputs/apk/debug/app-debug.apk` and copies it to `dist/force-paste.apk`. It does not run sudo or share files by default. With SDK components already installed, build and test directly:
+The build creates `app/build/outputs/apk/debug/app-debug.apk` and copies it to `dist/force-paste.apk`. With SDK components already installed, build and test directly:
 
 ```bash
 mise exec -- gradle assembleDebug testDebugUnitTest --console=plain
@@ -40,8 +40,6 @@ mise exec -- sh -c '"$ANDROID_HOME/platform-tools/adb" install -r app/build/outp
 ```
 
 Alternatively, transfer `app/build/outputs/apk/debug/app-debug.apk` to your device and open it. Android may ask you to allow installation from that file manager or browser; turn that permission off afterward if no longer needed. A signature mismatch requires using the original signing key or uninstalling the old app first; uninstalling removes its app data.
-
-Optional tailnet sharing: `./build.sh --share` explicitly enables persistent **Tailscale Serve** for just the APK and prints its status. It requires an installed, connected Tailscale client and permission to configure Serve; the script never elevates privileges. Access follows your tailnet policy, not public Internet Funnel. Stop this Serve configuration with `tailscale serve --https=443 off` (this also affects other handlers on that listener; check `tailscale serve status` first).
 
 ## Paste and return to your normal keyboard
 

@@ -2,13 +2,8 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-case "${1:-}" in
-    "") share=false ;;
-    --share) share=true ;;
-    *) echo "Usage: $0 [--share]" >&2; exit 2 ;;
-esac
-if (( $# > 1 )); then
-    echo "Usage: $0 [--share]" >&2
+if (( $# > 0 )); then
+    echo "Usage: $0" >&2
     exit 2
 fi
 
@@ -49,9 +44,3 @@ mise exec -- gradle assembleDebug --console=plain
 mkdir -p dist
 cp app/build/outputs/apk/debug/app-debug.apk dist/force-paste.apk
 printf '\nDebug APK: %s/dist/force-paste.apk\n' "$PWD"
-
-# Explicit opt-in only; no privilege escalation and no serving unrelated dist files.
-if "$share"; then
-    tailscale serve --bg "$PWD/dist/force-paste.apk"
-    tailscale serve status
-fi
