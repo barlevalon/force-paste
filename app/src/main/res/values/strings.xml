@@ -2,10 +2,15 @@
 <resources>
     <string name="app_name">Force Paste</string>
     <string name="paste_button">PASTE CLIPBOARD</string>
+    <string name="cancel_paste">PASTING — TAP TO CANCEL</string>
     <string name="empty_clipboard">Clipboard is empty</string>
-    <string name="pasting">Pasting...</string>
-    <string name="done">Done!</string>
+    <string name="unsupported_clipboard">Text only — copy text, not a file or image</string>
+    <string name="clipboard_unavailable">Cannot read clipboard. Copy text and try again.</string>
+    <string name="no_input_connection">No text field available. Tap a field and try again.</string>
+    <string name="paste_sent">Text sent. Check the field for missing or changed text.</string>
+    <string name="paste_failed">Paste stopped: editor unavailable or rejected input. Check the field before retrying.</string>
+    <string name="paste_cancelled">Paste cancelled. Text already sent stays in the field.</string>
     <string name="settings_title">Force Paste Keyboard</string>
-    <string name="settings_instructions">To use Force Paste:\n\n1. Enable this keyboard in system settings\n2. Switch to it when you need to paste\n3. Tap the PASTE button\n4. Switch back to your normal keyboard</string>
+    <string name="settings_instructions">A temporary, text-only keyboard for Android 7.0 and newer. Apps may still reject or change inserted text.\n\nAndroid may warn that keyboards can collect what you type. Enable Force Paste only if you trust the APK’s source. This implementation reads clipboard text when you tap PASTE CLIPBOARD and sends it to the selected field, with no clipboard history or network calls. The receiving app gets the text; avoid testing with sensitive content.\n\n1. Enable Force Paste in system keyboard settings. Keep your normal keyboard enabled so you can switch back.\n2. Copy text, tap the destination field, then choose Force Paste using Android’s keyboard switcher, often in the navigation bar or a keyboard notification.\n3. Tap PASTE CLIPBOARD. While pasting, tap again to cancel. Hiding or switching keyboards or changing fields also stops it; text already sent stays.\n4. Check the result, then select your normal keyboard using the keyboard switcher.\n\nNo switcher? Open Android Settings, find Languages &amp; input / On-screen keyboard, and select your usual keyboard as the default. Names vary by device. You can disable Force Paste there when finished.</string>
     <string name="enable_keyboard">Enable Keyboard</string>
 </resources>

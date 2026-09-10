@@ -1,37 +1,57 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 cd "$(dirname "$0")"
+
+case "${1:-}" in
+    "") share=false ;;
+    --share) share=true ;;
+    *) echo "Usage: $0 [--share]" >&2; exit 2 ;;
+esac
+if (( $# > 1 )); then
+    echo "Usage: $0 [--share]" >&2
+    exit 2
+fi
 
 ANDROID_HOME="${ANDROID_HOME:-$HOME/Android/Sdk}"
 export ANDROID_HOME ANDROID_SDK_ROOT="$ANDROID_HOME"
 
-# Install Android SDK if missing
-if [[ ! -d "$ANDROID_HOME/cmdline-tools/latest" ]]; then
-    echo "Installing Android SDK..."
+if [[ ! -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]]; then
+    echo "Installing Android command-line tools from Google..."
+    tools_tmp=$(mktemp -d)
+    trap 'rm -rf -- "$tools_tmp"' EXIT
+    curl --fail --location --show-error \
+        https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip \
+        --output "$tools_tmp/tools.zip"
+    # Official archive SHA-1 from https://dl.google.com/android/repository/repository2-1.xml
+    # Package cmdline-tools;12.0, Linux archive 11076708. Google publishes SHA-1 here.
+    echo "d313adb7aedccf6cf0cfca51ec180f0059f5f8f8  $tools_tmp/tools.zip" | sha1sum --check --status
+    unzip -q "$tools_tmp/tools.zip" -d "$tools_tmp"
     mkdir -p "$ANDROID_HOME/cmdline-tools"
-    curl -sL https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o /tmp/tools.zip
-    unzip -q /tmp/tools.zip -d "$ANDROID_HOME/cmdline-tools"
-    mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
-    rm /tmp/tools.zip
+    if [[ -e "$ANDROID_HOME/cmdline-tools/latest" ]]; then
+        echo "Incomplete tools at $ANDROID_HOME/cmdline-tools/latest; repair or move them before retrying." >&2
+        exit 1
+    fi
+    mv "$tools_tmp/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
 fi
 
 export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
-# Install required SDK components
-yes | sdkmanager --licenses >/dev/null 2>&1 || true
-sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" 2>/dev/null
+if [[ ! -f "$ANDROID_HOME/platforms/android-34/android.jar" || \
+      ! -x "$ANDROID_HOME/build-tools/36.0.0/aapt2" || \
+      ! -x "$ANDROID_HOME/platform-tools/adb" ]]; then
+    echo "Review Android SDK licenses when prompted. Components install into $ANDROID_HOME."
+    mise exec -- sdkmanager --sdk_root="$ANDROID_HOME" --licenses
+    mise exec -- sdkmanager --sdk_root="$ANDROID_HOME" --install \
+        "platform-tools" "platforms;android-34" "build-tools;36.0.0"
+fi
 
-# Build
 mise exec -- gradle assembleDebug --console=plain
-
-# Copy APK to serve directory and start tailscale serve
 mkdir -p dist
 cp app/build/outputs/apk/debug/app-debug.apk dist/force-paste.apk
+printf '\nDebug APK: %s/dist/force-paste.apk\n' "$PWD"
 
-echo ""
-echo "Starting tailscale serve..."
-sudo tailscale serve --bg "$(pwd)/dist"
-echo ""
-sudo tailscale serve status
-echo ""
-echo "Download APK from: https://$(tailscale status --json | jq -r '.Self.DNSName' | sed 's/\.$//')/force-paste.apk"
+# Explicit opt-in only; no privilege escalation and no serving unrelated dist files.
+if "$share"; then
+    tailscale serve --bg "$PWD/dist/force-paste.apk"
+    tailscale serve status
+fi

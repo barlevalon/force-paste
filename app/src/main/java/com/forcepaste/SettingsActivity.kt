@@ -6,28 +6,32 @@ import android.provider.Settings
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.ScrollView
+import kotlin.math.roundToInt
 import androidx.appcompat.app.AppCompatActivity
 
 class SettingsActivity : AppCompatActivity() {
+
+    private fun dp(value: Int) = (value * resources.displayMetrics.density).roundToInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(48, 48, 48, 48)
+            setPadding(dp(24), dp(24), dp(24), dp(24))
         }
 
         val title = TextView(this).apply {
             text = getString(R.string.settings_title)
             textSize = 24f
-            setPadding(0, 0, 0, 32)
+            setPadding(0, 0, 0, dp(16))
         }
 
         val instructions = TextView(this).apply {
             text = getString(R.string.settings_instructions)
             textSize = 16f
-            setPadding(0, 0, 0, 48)
+            setPadding(0, 0, 0, dp(24))
         }
 
         val enableButton = Button(this).apply {
@@ -41,6 +45,6 @@ class SettingsActivity : AppCompatActivity() {
         layout.addView(instructions)
         layout.addView(enableButton)
 
-        setContentView(layout)
+        setContentView(ScrollView(this).apply { addView(layout) })
     }
 }
