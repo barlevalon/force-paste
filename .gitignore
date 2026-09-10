@@ -9,7 +9,14 @@ build/
 *.iml
 *.iws
 *.ipr
+
+# Private release signing material (keep outside this repository)
 *.keystore
+*.jks
+*.p12
+keystore.properties
+signing.properties
+/signing/
 
 # Kotlin
 .kotlin/
